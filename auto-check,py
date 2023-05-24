@@ -1,0 +1,41 @@
+#!/usr/bin/bash
+
+import sys
+from colorama import init, Fore
+
+def detect_suspicious_commands(filepath):
+    suspicious_commands = ["nc", "netcat", "wget", "curl"]
+    suspicious_lines = []
+
+    with open(filepath, "r") as file:
+        script_content = file.readlines()
+
+        for line_number, line in enumerate(script_content, start=1):
+            for command in suspicious_commands:
+                if command in line:
+                    suspicious_lines.append((line_number, line.rstrip()))
+
+    return suspicious_lines
+
+if __name__ == "__main__":
+    init(autoreset=True)  # Inicializar colorama
+
+    if len(sys.argv) < 2:
+        print("Por favor, proporciona la ruta del archivo .sh como argumento.")
+        print("Uso: python identificar_script.py <ruta_archivo>")
+        sys.exit(1)
+
+    sh_file_path = sys.argv[1]
+
+    suspicious_lines = detect_suspicious_commands(sh_file_path)
+
+    if suspicious_lines:
+        print("El archivo contiene los siguientes comandos sospechosos:")
+        for line_number, line in suspicious_lines:
+            print(f"Línea {line_number}: {Fore.RED}{line}")
+    else:
+        print("El archivo no parece contener comandos sospechosos.")
+        
+     
+        
+        
